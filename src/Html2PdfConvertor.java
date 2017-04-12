@@ -1,9 +1,14 @@
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
+import java.awt.image.RenderedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.net.URL;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
+import javax.imageio.ImageIO;
+
+//import org.apache.commons.codec.binary.Base64;
 
 /*import org.w3c.dom.Document;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -26,10 +31,21 @@ public class Html2PdfConvertor {
 		// generatePDFFS();
 		// genPDF();
 		try {
-			png2Pdf();
+			//png2Pdf();
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	public static String imgToBase64String(final RenderedImage img, final String formatName) {
+	    final ByteArrayOutputStream os = new ByteArrayOutputStream();
+	    try {
+	        ImageIO.write(img, formatName, Base64.getEncoder().wrap(os));
+	        return os.toString(StandardCharsets.ISO_8859_1.name());
+	    } catch (final IOException ioe) {
+	        throw new UncheckedIOException(ioe);
+	    }
 	}
 
 	public static void png2Pdf() throws Exception {

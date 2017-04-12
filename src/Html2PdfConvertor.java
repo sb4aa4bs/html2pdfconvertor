@@ -1,12 +1,16 @@
-import java.awt.image.RenderedImage;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+//import java.util.Base64;
 
 import javax.imageio.ImageIO;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 
 //import org.apache.commons.codec.binary.Base64;
 
@@ -25,27 +29,62 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import sun.misc.BASE64Encoder;
+
 public class Html2PdfConvertor {
 
 	public static void main(String[] args) {
 		// generatePDFFS();
 		// genPDF();
 		try {
-			//png2Pdf();
-			
+			// String str = encodeToString("png").toString();
+			// System.out.println(str);
+			// png2Pdf();
+			getBase64String();
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
-	
-	public static String imgToBase64String(final RenderedImage img, final String formatName) {
-	    final ByteArrayOutputStream os = new ByteArrayOutputStream();
-	    try {
-	        ImageIO.write(img, formatName, Base64.getEncoder().wrap(os));
-	        return os.toString(StandardCharsets.ISO_8859_1.name());
-	    } catch (final IOException ioe) {
-	        throw new UncheckedIOException(ioe);
-	    }
+
+	public static void getBase64String() throws Exception {
+		FileInputStream itStrm = new FileInputStream(
+				"C:\\Work\\SOURCES\\TMOSan\\eservice-mytmo_uitest\\eservice_mytmo_tests\\target\\test-classes\\screenshots\\verifyBillingLink_step1_seq4.png");// image
+																																								// is
+																																								// lying
+																																								// at
+																																								// http://danny.oz.au/travel/mongolia/p/56255254-flower.jpg
+		String str = itStrm.toString();
+		byte[] bytes = IOUtils.toByteArray(itStrm);
+		// byte[] b3 = str.getBytes();
+		String base64String = new sun.misc.BASE64Encoder().encode(bytes);
+		System.out.println(base64String);
+		// output of base64String is
+		// amF2YS5pby5GaWxlSW5wdXRTdHJlYW1AMTdlMDYwMA==
+	}
+
+	public static String encodeToString(String type) throws Exception {
+		File img = new File(
+				"C:\\Work\\SOURCES\\TMOSan\\eservice-mytmo_uitest\\eservice_mytmo_tests\\target\\test-classes\\screenshots\\verifyBillingLink_step1_seq4.png");
+		System.out.println("File Image :::: " + img.getAbsolutePath());
+		BufferedImage in = ImageIO.read(img);
+		BufferedImage image = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		String encodedfile = null;
+		String base64String = null;
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(image, type, bos);
+			byte[] imageBytes = bos.toByteArray();
+			BASE64Encoder encoder = new BASE64Encoder();
+			base64String = encoder.encode(imageBytes);
+			encodedfile = new String(Base64.encodeBase64String(imageBytes));
+			System.out.println(base64String);
+			System.out.println(encodedfile);
+			bos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return encodedfile;
 	}
 
 	public static void png2Pdf() throws Exception {
